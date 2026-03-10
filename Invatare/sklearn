@@ -1,0 +1,810 @@
+Ce este sklearn
+
+scikit-learn este una dintre cele mai folosite biblioteci Python pentru machine learning clasic. În cod o importi de obicei prin prefixul sklearn. Ea nu este făcută pentru antrenarea LLM-urilor mari, ci pentru probleme precum:
+
+predicție de prețuri,
+
+clasificare spam / non-spam,
+
+detectare fraudă,
+
+clustering,
+
+reducere dimensională,
+
+evaluare de modele,
+
+pipeline-uri de preprocesare și modelare.
+
+Pe scurt:
+
+numpy lucrează cu numere și matrici,
+
+pandas lucrează cu tabele,
+
+sklearn învață modele din acele date.
+
+Cum se gândește sklearn
+
+Aproape tot în sklearn urmează aceeași logică:
+
+model.fit(X_train, y_train)   # învață
+pred = model.predict(X_test)  # prezice
+
+Aceasta este ideea centrală a API-ului sklearn: aproape toate modelele și transformările au o interfață comună, ceea ce face biblioteca ușor de învățat și combinat în pipeline-uri.
+
+Ce sunt X și y
+
+X = datele de intrare, adică features
+
+y = răspunsul corect, adică target
+
+Exemplu:
+
+X = kilometri, an, motor
+
+y = prețul mașinii
+
+Ce fel de lucruri are sklearn
+
+La nivel mare, documentația îl împarte în câteva zone importante:
+
+supervised learning
+
+unsupervised learning
+
+model selection and evaluation
+
+inspection
+
+visualizations
+
+dataset transformations
+
+dataset loading utilities
+
+model persistence
+
+common pitfalls and recommended practices
+
+Mai jos le explic pe rând.
+
+1. Supervised learning
+
+Aici intră problemele unde ai exemple cu răspunsuri corecte. Scopul este să înveți relația dintre intrare și ieșire. Documentația oficială include aici modele liniare, SVM, arbori, ensemble, nearest neighbors, naive Bayes, rețele neurale clasice, feature selection, semi-supervised și altele.
+
+1.1 Regression
+
+O folosești când vrei să prezici un număr:
+
+preț casă,
+
+consum,
+
+temperatură,
+
+salariu.
+
+Exemple de modele
+
+LinearRegression
+
+Ridge
+
+Lasso
+
+ElasticNet
+
+RandomForestRegressor
+
+GradientBoostingRegressor
+
+Cod scurt
+from sklearn.linear_model import LinearRegression
+
+model = LinearRegression()
+model.fit(X_train, y_train)
+pred = model.predict(X_test)
+Când o folosești
+
+când target-ul este numeric,
+
+când vrei interpretabilitate,
+
+când vrei un baseline rapid.
+
+Modelele liniare presupun că ieșirea poate fi exprimată ca o combinație liniară a feature-urilor, cu coeficienți coef_ și un termen liber intercept_.
+
+1.2 Classification
+
+O folosești când vrei să prezici o clasă:
+
+spam / non-spam,
+
+fraudă / normal,
+
+client pleacă / nu pleacă,
+
+specie floare.
+
+Exemple de modele
+
+LogisticRegression
+
+DecisionTreeClassifier
+
+RandomForestClassifier
+
+SVC
+
+KNeighborsClassifier
+
+NaiveBayes
+
+Cod scurt
+from sklearn.linear_model import LogisticRegression
+
+model = LogisticRegression(max_iter=1000)
+model.fit(X_train, y_train)
+pred = model.predict(X_test)
+Când o folosești
+
+când ieșirea este categorie,
+
+când vrei și probabilități,
+
+când vrei reguli simple sau modele puternice pe date tabulare.
+
+SVM-urile, de exemplu, sunt descrise oficial ca metode supervizate pentru clasificare, regresie și detecție de outlieri.
+
+1.3 Ensemble methods
+
+Aici intră modele care combină mai mulți estimatori pentru rezultate mai bune:
+
+RandomForest
+
+GradientBoosting
+
+HistGradientBoosting
+
+AdaBoost
+
+Voting
+
+Stacking
+
+Ensemble-urile cresc de obicei robustețea și generalizarea față de un singur model. Random forest și gradient boosting sunt două dintre cele mai populare exemple oficiale.
+
+Cod scurt
+from sklearn.ensemble import RandomForestClassifier
+
+model = RandomForestClassifier(random_state=42)
+model.fit(X_train, y_train)
+pred = model.predict(X_test)
+Când le folosești
+
+când ai date tabulare,
+
+când vrei performanță bună fără mult feature engineering,
+
+când relațiile dintre variabile nu sunt doar liniare.
+
+1.4 SVM
+
+Support Vector Machines sunt utile mai ales când ai:
+
+date puține sau medii,
+
+multe dimensiuni,
+
+separare clară între clase.
+
+Cod scurt
+from sklearn.svm import SVC
+
+model = SVC()
+model.fit(X_train, y_train)
+pred = model.predict(X_test)
+1.5 K-Nearest Neighbors
+
+Ideea este simplă: un punct nou este clasificat sau evaluat în funcție de vecinii apropiați.
+
+Cod scurt
+from sklearn.neighbors import KNeighborsClassifier
+
+model = KNeighborsClassifier(n_neighbors=5)
+model.fit(X_train, y_train)
+pred = model.predict(X_test)
+Când îl folosești
+
+pentru seturi mici,
+
+pentru prototipuri simple,
+
+când vrei un model intuitiv.
+
+1.6 Naive Bayes
+
+Modele rapide, utile mai ales pe text și clasificare simplă. Documentația oficială le descrie ca metode bazate pe teorema lui Bayes, cu ipoteză puternică de independență între feature-uri.
+
+Cod scurt
+from sklearn.naive_bayes import MultinomialNB
+
+model = MultinomialNB()
+model.fit(X_train, y_train)
+pred = model.predict(X_test)
+1.7 Neural networks din sklearn
+
+Da, sklearn are și rețele neurale clasice:
+
+MLPClassifier
+
+MLPRegressor
+
+Dar nu pentru LLM-uri sau deep learning mare. Pentru asta se folosesc mai degrabă PyTorch sau TensorFlow. Documentația le listează în învățare supervizată și nesupervizată, dar ele nu sunt orientate spre large-scale deep learning.
+
+2. Unsupervised learning
+
+Aici nu ai etichete y. Modelul caută singur structură în date. Documentația oficială include clustering, Gaussian mixtures, manifold learning, biclustering, decompositions, covariance estimation, density estimation, outlier detection și altele.
+
+2.1 Clustering
+
+Grupează date asemănătoare.
+
+Exemple
+
+KMeans
+
+DBSCAN
+
+AgglomerativeClustering
+
+Cod scurt
+from sklearn.cluster import KMeans
+
+model = KMeans(n_clusters=3, random_state=42)
+labels = model.fit_predict(X)
+Când îl folosești
+
+segmentare clienți,
+
+grupare produse,
+
+găsirea structurii fără target.
+
+2.2 Dimensionality reduction
+
+Scop: reduci numărul de variabile, păstrând cât mai multă informație.
+
+Exemple
+
+PCA
+
+TruncatedSVD
+
+NMF
+
+Cod scurt
+from sklearn.decomposition import PCA
+
+pca = PCA(n_components=2)
+X_reduced = pca.fit_transform(X)
+Când îl folosești
+
+vizualizare,
+
+reducere zgomot,
+
+accelerare modele,
+
+compresie de feature-uri.
+
+2.3 Outlier / novelty detection
+
+Pentru a găsi puncte neobișnuite:
+
+anomalii,
+
+fraude,
+
+erori de senzor.
+
+Exemple
+
+IsolationForest
+
+OneClassSVM
+
+LocalOutlierFactor
+
+Documentația oficială are o secțiune dedicată pentru novelty și outlier detection.
+
+3. Model selection and evaluation
+
+Aceasta este una dintre cele mai importante părți din sklearn. Include:
+
+cross-validation,
+
+tuning de hiperparametri,
+
+metrici,
+
+tuning de threshold pentru clasificare.
+
+3.1 Train / validation / test
+
+Scop: să nu te minți singur. Modelul învață pe train și este verificat pe date separate.
+
+Cod scurt
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+3.2 Cross-validation
+
+Împarți datele în mai multe bucăți și repeți antrenarea de mai multe ori. Asta dă o evaluare mai stabilă a performanței.
+
+Cod scurt
+from sklearn.model_selection import cross_val_score
+from sklearn.linear_model import Ridge
+
+model = Ridge()
+scores = cross_val_score(model, X, y, cv=5, scoring="r2")
+print(scores.mean())
+Când o folosești
+
+aproape mereu, înainte de concluzii,
+
+când ai puține date,
+
+când vrei o estimare mai robustă.
+
+3.3 Hyperparameter tuning
+
+Aici alegi setările modelului:
+
+alpha,
+
+max_depth,
+
+n_estimators,
+
+C,
+
+kernel,
+
+etc.
+
+Exemple
+
+GridSearchCV
+
+RandomizedSearchCV
+
+Cod scurt
+from sklearn.model_selection import GridSearchCV
+from sklearn.linear_model import Ridge
+
+grid = GridSearchCV(
+    Ridge(),
+    param_grid={"alpha": [0.1, 1.0, 10.0]},
+    cv=5
+)
+grid.fit(X_train, y_train)
+print(grid.best_params_)
+Când o folosești
+
+când vrei cel mai bun model dintr-o familie,
+
+după ce ai baseline,
+
+înainte de evaluarea finală pe test.
+
+3.4 Metrics
+
+Documentația oficială are o secțiune mare doar pentru metrici și explică faptul că alegerea scorului depinde de problemă și de obiectivul real.
+
+Pentru regresie
+
+mean_absolute_error
+
+mean_squared_error
+
+root_mean_squared_error sau RMSE
+
+r2_score
+
+Pentru clasificare
+
+accuracy_score
+
+precision_score
+
+recall_score
+
+f1_score
+
+roc_auc_score
+
+Cod scurt
+from sklearn.metrics import mean_absolute_error, r2_score
+
+mae = mean_absolute_error(y_test, pred)
+r2 = r2_score(y_test, pred)
+Când folosești ce
+
+MAE: când vrei eroare medie ușor de înțeles,
+
+RMSE: când vrei să penalizezi mai tare greșelile mari,
+
+R²: când vrei cât de bine explică modelul variația datelor,
+
+Precision/Recall: când contează mult fals pozitivele sau fals negativele.
+
+4. Dataset transformations
+
+Această zonă este extrem de importantă. Aici transformi datele înainte de model:
+
+scalare,
+
+normalizare,
+
+encodare,
+
+imputare valori lipsă,
+
+binning,
+
+transformări pe text și imagini.
+
+4.1 Scaling
+
+Exemple:
+
+StandardScaler
+
+MinMaxScaler
+
+RobustScaler
+
+Cod scurt
+from sklearn.preprocessing import StandardScaler
+
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X_train)
+Când îl folosești
+
+pentru regresii,
+
+pentru SVM,
+
+pentru KNN,
+
+pentru rețele neurale simple.
+
+4.2 Imputation
+
+Când ai valori lipsă.
+
+Exemple
+
+SimpleImputer
+
+KNNImputer
+
+IterativeImputer — acesta este încă marcat experimental în documentație.
+
+Cod scurt
+from sklearn.impute import SimpleImputer
+
+imp = SimpleImputer(strategy="median")
+X_filled = imp.fit_transform(X)
+4.3 Feature extraction
+
+Scikit-learn are o secțiune dedicată pentru transformarea textului sau imaginilor în vectori numerici, de exemplu CountVectorizer, TfidfVectorizer, DictVectorizer, FeatureHasher. Documentația precizează clar că feature extraction înseamnă transformarea datelor brute în feature-uri numerice utilizabile de algoritmi.
+
+Cod scurt pentru text
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+vec = TfidfVectorizer()
+X_text = vec.fit_transform([
+    "acesta este un email",
+    "acesta este spam"
+])
+Când îl folosești
+
+clasificare de text,
+
+search simplu,
+
+NLP clasic.
+
+5. Pipeline
+
+Pipeline este una dintre cele mai bune idei din sklearn. Îți permite să legi mai mulți pași:
+
+scaler,
+
+imputer,
+
+encoder,
+
+model.
+
+Cod scurt
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import Ridge
+
+pipe = Pipeline([
+    ("scaler", StandardScaler()),
+    ("model", Ridge())
+])
+
+pipe.fit(X_train, y_train)
+pred = pipe.predict(X_test)
+Când îl folosești
+
+aproape mereu în proiecte serioase,
+
+când vrei cod curat,
+
+când vrei să eviți erori de tip data leakage.
+
+Documentația oficială pune accent pe utilitarele pentru fitting, preprocessing, model selection și evaluare, exact genul de workflow pe care îl acoperă pipeline-urile.
+
+6. Inspection
+
+Aici intră metode pentru a înțelege modelul. Una dintre cele mai populare este permutation_importance, care măsoară cât de importantă este fiecare variabilă pentru performanța modelului. Documentația are o secțiune separată pentru inspection.
+
+Cod scurt
+from sklearn.inspection import permutation_importance
+
+result = permutation_importance(model, X_test, y_test, n_repeats=10, random_state=42)
+print(result.importances_mean)
+Când o folosești
+
+după antrenare,
+
+când vrei să explici ce contează în model,
+
+când vrei interpretabilitate.
+
+7. Visualizations
+
+sklearn are și clase pentru afișarea unor rezultate:
+
+ROC curves,
+
+confusion matrix,
+
+precision-recall,
+
+calibration,
+
+decision boundaries.
+
+De exemplu, RocCurveDisplay din documentația oficială este una dintre clasele de vizualizare pentru clasificare.
+
+Cod scurt
+from sklearn.metrics import RocCurveDisplay
+
+RocCurveDisplay.from_estimator(model, X_test, y_test)
+8. Dataset loading utilities
+
+sklearn oferă și seturi de date gata de folosit:
+
+load_iris
+
+load_digits
+
+load_diabetes
+
+fetch_california_housing
+
+fetch_20newsgroups
+
+Cod scurt
+from sklearn.datasets import load_iris
+
+data = load_iris(as_frame=True)
+X = data.data
+y = data.target
+Când le folosești
+
+învățare,
+
+exerciții,
+
+prototipuri rapide,
+
+demo-uri.
+
+9. Model persistence
+
+Aici intră salvarea modelului pe disc. Documentația are secțiune dedicată pentru model persistence.
+
+Cod scurt
+from joblib import dump, load
+
+dump(model, "model.joblib")
+model2 = load("model.joblib")
+Când o folosești
+
+când vrei să refolosești modelul,
+
+când treci în producție,
+
+când vrei să nu reantrenezi de fiecare dată.
+
+10. Common pitfalls
+
+Documentația oficială are și o secțiune despre greșeli comune și practici recomandate.
+
+Cele mai frecvente greșeli la început:
+
+faci fit pe tot datasetul înainte de split,
+
+scalezi și testul cu informație din train greșit,
+
+folosești test set-ul pentru tuning,
+
+alegi metrici nepotrivite,
+
+compari modele fără cross-validation.
+
+Aici pipeline-urile ajută enorm.
+
+Cele mai importante submodule din sklearn
+
+Dacă vrei să știi „ce merită învățat primul”, reține acestea:
+
+Esențiale
+
+sklearn.model_selection
+
+sklearn.preprocessing
+
+sklearn.pipeline
+
+sklearn.metrics
+
+sklearn.linear_model
+
+sklearn.ensemble
+
+sklearn.tree
+
+sklearn.svm
+
+sklearn.neighbors
+
+sklearn.cluster
+
+sklearn.decomposition
+
+sklearn.inspection
+
+sklearn.datasets
+
+Toate acestea apar direct sau indirect în User Guide și API Reference.
+
+Când folosești sklearn și când nu
+Îl folosești când:
+
+ai date tabulare,
+
+vrei modele clasice ML,
+
+vrei prototipare rapidă,
+
+vrei pipeline-uri curate,
+
+vrei interpretabilitate,
+
+înveți machine learning.
+
+Nu este prima alegere când:
+
+vrei LLM-uri,
+
+vrei deep learning mare pe imagini/audio/video,
+
+ai nevoie de GPU training serios,
+
+faci modele de limbaj moderne tip transformer mare.
+
+Acolo mergi mai mult pe PyTorch, TensorFlow, JAX, MLX, Hugging Face.
+
+Cel mai util mod de a-l învăța
+
+Ordinea bună pentru tine ar fi asta:
+
+train_test_split
+
+LinearRegression și LogisticRegression
+
+StandardScaler
+
+Pipeline
+
+cross_val_score
+
+GridSearchCV
+
+RandomForest
+
+KMeans
+
+PCA
+
+permutation_importance
+
+Așa înțelegi mai întâi scheletul, apoi modelele.
+
+Un mini exemplu complet
+from sklearn.datasets import load_diabetes
+from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import Ridge
+from sklearn.metrics import mean_absolute_error
+
+data = load_diabetes(as_frame=True)
+X = data.data
+y = data.target
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+pipe = Pipeline([
+    ("scaler", StandardScaler()),
+    ("model", Ridge(alpha=1.0))
+])
+
+pipe.fit(X_train, y_train)
+pred = pipe.predict(X_test)
+
+mae = mean_absolute_error(y_test, pred)
+print("MAE:", mae)
+
+scores = cross_val_score(pipe, X, y, cv=5, scoring="r2")
+print("CV R2 mean:", scores.mean())
+
+Acest exemplu face aproape tot workflow-ul real:
+
+încarcă date,
+
+face split,
+
+scalează,
+
+antrenează,
+
+prezice,
+
+evaluează,
+
+validează.
+
+Rezumatul cel mai scurt
+
+sklearn este biblioteca standard pentru machine learning clasic în Python. Are:
+
+modele supervizate,
+
+metode nesupervizate,
+
+transformări de date,
+
+metrici,
+
+cross-validation,
+
+hyperparameter tuning,
+
+pipeline-uri,
+
+instrumente de interpretare și salvare a modelelor.
